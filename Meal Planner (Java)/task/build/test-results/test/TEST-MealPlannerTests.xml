@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MealPlannerTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-04-12T14:23:08" hostname="Quocs-MBP16.local" time="0.061">
+  <properties/>
+  <testcase name="start" classname="MealPlannerTests" time="0.061"/>
+  <system-out><![CDATA[?[1;31m
+Start test 1?[0m
+Which meal do you want to add (breakfast, lunch, dinner)?
+> lunch
+Input the meal's name:
+> sushi
+Input the ingredients:
+> salmon, rice, avocado
+Category: lunch
+Name: sushi
+Ingredients:
+salmon
+ rice
+ avocado
+?[1;31m
+Start test 2?[0m
+Which meal do you want to add (breakfast, lunch, dinner)?
+> dinner
+Input the meal's name:
+> salad
+Input the ingredients:
+> lettuce,tomato,onion,cheese,olives
+Category: dinner
+Name: salad
+Ingredients:
+lettuce
+tomato
+onion
+cheese
+olives
+?[1;31m
+Start test 3?[0m
+Which meal do you want to add (breakfast, lunch, dinner)?
+> breakfast
+Input the meal's name:
+> oatmeal
+Input the ingredients:
+> oats, milk, banana, peanut butter
+Category: breakfast
+Name: oatmeal
+Ingredients:
+oats
+ milk
+ banana
+ peanut butter
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

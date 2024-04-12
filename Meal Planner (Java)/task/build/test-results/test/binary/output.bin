@@ -1,0 +1,46 @@
+[1;31m
+Start test 1[0m
+:Which meal do you want to add (breakfast, lunch, dinner)?
+> lunch
+Input the meal's name:
+> sushi
+Input the ingredients:
+> salmon, rice, avocado
+Category: lunch
+Name: sushi
+Ingredients:
+salmon
+ rice
+	 avocado
+[1;31m
+Start test 2[0m
+:Which meal do you want to add (breakfast, lunch, dinner)?
+	> dinner
+Input the meal's name:
+> salad
+Input the ingredients:
+%> lettuce,tomato,onion,cheese,olives
+Category: dinner
+Name: salad
+Ingredients:
+lettuce
+tomato
+onion
+cheese
+olives
+[1;31m
+Start test 3[0m
+:Which meal do you want to add (breakfast, lunch, dinner)?
+> breakfast
+Input the meal's name:
+
+> oatmeal
+Input the ingredients:
+$> oats, milk, banana, peanut butter
+Category: breakfast
+Name: oatmeal
+Ingredients:
+oats
+ milk
+ banana
+ peanut butter
