@@ -223,9 +223,9 @@ files:
   - name: src/mealplanner/Meal.java
     visible: true
     learner_created: true
-feedback_link: https://hyperskill.org/projects/318/stages/1783/implement#comment
+feedback_link: https://hyperskill.org/learn/step/25571#comment
 status: Solved
 feedback:
   message: Congratulations!
   time: "Fri, 12 Apr 2024 14:23:08 UTC"
-record: -1
+record: 1

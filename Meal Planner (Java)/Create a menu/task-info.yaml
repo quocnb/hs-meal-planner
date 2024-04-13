@@ -326,6 +326,41 @@ files:
         }
       }
     learner_created: false
-feedback_link: https://hyperskill.org/projects/318/stages/1784/implement#comment
-status: Unchecked
+  - name: src/mealplanner/Meal.java
+    visible: true
+    text: |
+      package mealplanner;
+      
+      enum MealType {
+          BREAKFAST, LUNCH, DINNER
+      }
+      public class Meal {
+          MealType type;
+          String name;
+          String[] ingredients;
+      
+          public Meal(String type, String name, String ingredients) {
+              this.type = MealType.valueOf(type.toUpperCase());
+              this.name = name;
+              this.ingredients = ingredients.split(",");
+          }
+      
+          @Override
+          public String toString() {
+              return String.format("""
+                      Category: %s
+                      Name: %s
+                      Ingredients:
+                      %s""",
+                      type.name().toLowerCase(),
+                      name,
+                      String.join("\n", ingredients));
+          }
+      }
+    learner_created: true
+feedback_link: https://hyperskill.org/learn/step/25572#comment
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Sat, 13 Apr 2024 13:47:28 UTC"
 record: -1
