@@ -37,27 +37,47 @@ public class DbManager {
         try {
             Statement getMealStm = connection.createStatement();
             ResultSet mealRS = getMealStm.executeQuery(Queries.SELECT_ALL_MEALS);
-            while (mealRS.next()) {
-                int mealId = mealRS.getInt("meal_id");
-                String category = mealRS.getString("category");
-                String name = mealRS.getString("meal");
-                PreparedStatement getIngredientsStm = connection.prepareStatement(Queries.SELECT_INGREDIENTS_BY_MEAL);
-                getIngredientsStm.setInt(1, mealId);
-                ResultSet ingredientsRs = getIngredientsStm.executeQuery();
-                List<Ingredient> ingredients = new ArrayList<>();
-                while (ingredientsRs.next()) {
-                    int ingredientId = ingredientsRs.getInt("ingredient_id");
-                    String ingredient = ingredientsRs.getString("ingredient");
-                    ingredients.add(new Ingredient(ingredientId, ingredient, mealId));
-                }
-                Meal meal = new Meal(mealId, category, name, ingredients);
-                meals.add(meal);
-            }
+            meals = getMealFromResultSet(mealRS);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
         return meals;
     }
+
+    public List<Meal> getMeal(String category) {
+        List<Meal> meals = new ArrayList<>();
+        try {
+            PreparedStatement getMealStm = connection.prepareStatement(Queries.SELECT_MEAL_BY_CATEGORY);
+            getMealStm.setString(1, category);
+            ResultSet mealRS = getMealStm.executeQuery();
+            meals = getMealFromResultSet(mealRS);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return meals;
+    }
+
+    List<Meal> getMealFromResultSet(ResultSet rs) throws SQLException {
+        List<Meal> result = new ArrayList<>();
+        while (rs.next()) {
+            int mealId = rs.getInt("meal_id");
+            String category = rs.getString("category");
+            String name = rs.getString("meal");
+            PreparedStatement getIngredientsStm = connection.prepareStatement(Queries.SELECT_INGREDIENTS_BY_MEAL);
+            getIngredientsStm.setInt(1, mealId);
+            ResultSet ingredientsRs = getIngredientsStm.executeQuery();
+            List<Ingredient> ingredients = new ArrayList<>();
+            while (ingredientsRs.next()) {
+                int ingredientId = ingredientsRs.getInt("ingredient_id");
+                String ingredient = ingredientsRs.getString("ingredient");
+                ingredients.add(new Ingredient(ingredientId, ingredient, mealId));
+            }
+            Meal meal = new Meal(mealId, category, name, ingredients);
+            result.add(meal);
+        }
+        return result;
+    }
+
     public void addMeal(Meal meal) {
         try {
             PreparedStatement statement = connection.prepareStatement(Queries.INSERT_MEAL);

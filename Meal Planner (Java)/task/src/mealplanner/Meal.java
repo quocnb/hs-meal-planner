@@ -1,13 +1,8 @@
 package mealplanner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-enum MealType {
-    BREAKFAST, LUNCH, DINNER
-}
 public class Meal {
     int mealId;
     String category;
@@ -35,11 +30,9 @@ public class Meal {
     @Override
     public String toString() {
         return String.format("""
-                Category: %s
                 Name: %s
                 Ingredients:
                 %s""",
-                category,
                 meal,
                 String.join("\n", ingredients.stream().map(Ingredient::toString).toList()));
     }
@@ -47,16 +40,12 @@ public class Meal {
     /**
      * Validate meal type.
      * Meal type must be breakfast, lunch or dinner.
-     * @param type string
+     * @param category string
      * @return true: valid type otherwise false
      */
-    public static boolean validateType(String type) {
-        try {
-            MealType.valueOf(type.toUpperCase());
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public static boolean validateCategory(String category) {
+        final List<String> validCategories = List.of("breakfast", "lunch", "dinner");
+        return validCategories.contains(category);
     }
 
     /**

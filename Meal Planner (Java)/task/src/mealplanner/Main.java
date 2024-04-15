@@ -1,6 +1,5 @@
 package mealplanner;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,11 +22,7 @@ public class Main {
             addMeal();
             break;
           case "show":
-            if (meals.isEmpty()) {
-              System.out.println("No meals saved. Add a meal first.");
-            } else {
-              meals.forEach(s -> System.out.println(s.toString() + "\n"));
-            }
+            showMeal();
             break;
           default:
             break;
@@ -35,6 +30,24 @@ public class Main {
     }
   }
 
+  static void showMeal() {
+    while (true) {
+      System.out.println("Which category do you want to print (breakfast, lunch, dinner)?");
+      String category = scanner.nextLine();
+      if (!Meal.validateCategory(category)) {
+        System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
+        continue;
+      }
+      List<Meal> mealsInCategory = dbManager.getMeal(category);
+      if (mealsInCategory.isEmpty()) {
+        System.out.println("No meals found.");
+      } else {
+        System.out.printf("Category: %s\n\n", category);
+        mealsInCategory.forEach(s -> System.out.println(s.toString() + "\n"));
+      }
+      break;
+    }
+  }
   static void addMeal() {
     // Get type
     String type;
@@ -42,7 +55,7 @@ public class Main {
     while (true) {
       System.out.println("Which meal do you want to add (breakfast, lunch, dinner)?");
       type = scanner.nextLine();
-      if (!Meal.validateType(type)) {
+      if (!Meal.validateCategory(type)) {
         System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
         continue;
       }

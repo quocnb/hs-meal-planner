@@ -104,7 +104,7 @@ public class MealPlannerTests extends StageTest {
   }
 
   @DynamicTest(order = 1)
-  public CheckResult normalExe6Test() {
+  public CheckResult normalExe9Test() {
     checkConnection();
     Connection connection = null;
     try {
@@ -150,7 +150,7 @@ public class MealPlannerTests extends StageTest {
   }
 
   @DynamicTest(order = 2)
-  CheckResult normalExe7Test() {
+  CheckResult normalExe10Test() {
     checkConnection();
     Connection connection = null;
     try {
@@ -167,14 +167,14 @@ public class MealPlannerTests extends StageTest {
       return CheckResult.wrong("An exception was thrown, while trying to drop tables - "+e);
     }
 
+
     try {
       CheckOutput co = new CheckOutput();
       if (!co.start("What would you like to do (add, show, exit)?"))
         return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
 
       if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)" +
-                "?\"");
+        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
 
       if (!co.input("lunch", "Input the meal's name:"))
         return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
@@ -188,9 +188,55 @@ public class MealPlannerTests extends StageTest {
       if (!co.inputNext("What would you like to do (add, show, exit)?"))
         return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
 
-      if (!co.input("show",
-              "Category: lunch", "Name: sushi", "Ingredients:", "salmon", "rice", "avocado"))
+      if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
+
+      if (!co.input("lunch", "Input the meal's name:"))
+        return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
+
+      if (!co.input("omelette", "Input the ingredients:"))
+        return CheckResult.wrong("Your output should contain \"Input the ingredients:\"");
+
+      if (!co.input("eggs, milk, cheese", "The meal has been added!"))
+        return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
+
+      if (!co.inputNext("What would you like to do (add, show, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+
+      if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
+
+      if (!co.input("breakfast", "Input the meal's name:"))
+        return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
+
+      if (!co.input("oatmeal", "Input the ingredients:"))
+        return CheckResult.wrong("Your output should contain \"Input the ingredients:\"");
+
+      if (!co.input("oats, milk, banana, peanut butter", "The meal has been added!"))
+        return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
+
+      if (!co.inputNext("What would you like to do (add, show, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+
+      if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+
+      if (!co.input("lunch", "Category: lunch", "Name: sushi", "Ingredients:", "salmon", "rice", "avocado",
+              "Name: omelette", "Ingredients:", "eggs", "milk", "cheese"))
         return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
+
+      if (!co.inputNext("What would you like to do (add, show, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+
+      if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+
+      if (!co.input("breakfast", "Category: breakfast", "Name: oatmeal", "Ingredients:", "oats",
+              "milk", "banana", "peanut butter"))
+        return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
+
+      if (!co.inputNext("What would you like to do (add, show, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
 
       if (!co.input("exit", "Bye!"))
         return CheckResult.wrong("Your output should contain \"Bye!\"");
@@ -198,14 +244,14 @@ public class MealPlannerTests extends StageTest {
       if (!co.programIsFinished())
         return CheckResult.wrong("The application didn't exit.");
     } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown while testing - " + e);
+      return CheckResult.wrong("An exception was thrown while testing - "+e);
     }
 
     return CheckResult.correct();
   }
 
   @DynamicTest(order = 3)
-  CheckResult normalExe8Test() {
+  CheckResult normalExe11Test() {
     checkConnection();
     Connection connection = null;
     try {
@@ -219,106 +265,56 @@ public class MealPlannerTests extends StageTest {
       if (!co.start("What would you like to do (add, show, exit)?"))
         return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
 
-      if (!co.input(
-              "show", "Category: lunch", "Name: sushi", "Ingredients:",
-              "salmon", "rice", "avocado"))
+      if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+
+      if (!co.input("lunch", "Category: lunch", "Name: sushi", "Ingredients:", "salmon", "rice", "avocado",
+              "Name: omelette", "Ingredients:", "eggs", "milk", "cheese"))
         return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
 
-      if (!co.input("exit", "Bye!"))
-        return CheckResult.wrong("Your output should contain \"Bye!\"");
-
-      if (!co.programIsFinished())
-        return CheckResult.wrong("The application didn't exit.");
-    } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown while testing - " + e);
-    }
-
-    return CheckResult.correct();
-  }
-
-  @DynamicTest(order = 4)
-  CheckResult normalExeNew01Test() {
-    checkConnection();
-    Connection connection = null;
-    try {
-      connection = DriverManager.getConnection(DB_URL, USER, PASS);
-    } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown, while trying to connect to database. Connection Failed");
-    }
-    try {
-      Statement statement = connection.createStatement();
-      statement.executeUpdate("DROP TABLE if exists plan");
-      statement.executeUpdate("DROP TABLE if exists ingredients");
-      statement.executeUpdate("DROP TABLE if exists meals");
-    } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown, while trying to drop tables - "+e);
-    }
-
-    try {
-      CheckOutput co = new CheckOutput();
-      if (!co.start("What would you like to do (add, show, exit)?"))
+      if (!co.inputNext("What would you like to do (add, show, exit)?"))
         return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
 
-      if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)" +
-                "?\"");
+      if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
 
-      if (!co.input("lunch", "Input the meal's name:"))
-        return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
-
-      if (!co.input("sushi", "Input the ingredients:"))
-        return CheckResult.wrong("Your output should contain \"Input the ingredients:\"");
-
-      if (!co.input("salmon, rice, avocado", "The meal has been added!"))
-        return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
+      if (!co.input("breakfast", "Category: breakfast", "Name: oatmeal", "Ingredients:", "oats",
+              "milk", "banana", "peanut butter"))
+        return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
 
       if (!co.inputNext("What would you like to do (add, show, exit)?"))
         return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
 
-      if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)" +
-                "?\"");
+      if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
 
-      if (!co.input("breakfast", "Input the meal's name:"))
-        return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
+      if (!co.input("brunch", "Wrong meal category! Choose from: breakfast, lunch, dinner."))
+        return CheckResult.wrong("Wrong output after the input of a category that doesn't exist.");
 
-      if (!co.input("english", "Input the ingredients:"))
-        return CheckResult.wrong("Your output should contain \"Input the ingredients:\"");
-
-      if (!co.input("sausages, eggs", "The meal has been added!"))
-        return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
-
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.input("dinner", "No meals found."))
+        return CheckResult.wrong("Wrong output for a category with no added meals.");
 
       if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)" +
-                "?\"");
+        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
 
       if (!co.input("dinner", "Input the meal's name:"))
         return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
 
-      if (!co.input("meatballs", "Input the ingredients:"))
+      if (!co.input("soup", "Input the ingredients:"))
         return CheckResult.wrong("Your output should contain \"Input the ingredients:\"");
 
-      if (!co.input("meat, bread, salt, pepper, egg", "The meal has been added!"))
+      if (!co.input("potato, rice, mushrooms", "The meal has been added!"))
         return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
 
       if (!co.inputNext("What would you like to do (add, show, exit)?"))
         return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
 
-      if (!co.input(
-              "show", "Category: lunch", "Name: sushi", "Ingredients:",
-              "salmon", "rice", "avocado"))
-        return CheckResult.wrong("Wrong \"show\" output for the lunch meal.");
+      if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
 
-      if (!co.inputNext("Category: breakfast", "Name: english", "Ingredients:",
-              "sausages", "eggs"))
-        return CheckResult.wrong("Wrong \"show\" output for the breakfast meal.");
-
-      if (!co.inputNext("Category: dinner", "Name: meatballs", "Ingredients:",
-              "meat", "bread", "salt", "pepper", "egg"))
-        return CheckResult.wrong("Wrong \"show\" output for the dinner meal.");
+      if (!co.input("dinner", "Category: dinner", "Name: soup", "Ingredients:", "potato",
+              "rice", "mushrooms"))
+        return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
 
       if (!co.inputNext("What would you like to do (add, show, exit)?"))
         return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
@@ -329,42 +325,12 @@ public class MealPlannerTests extends StageTest {
       if (!co.programIsFinished())
         return CheckResult.wrong("The application didn't exit.");
     } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown while testing - " + e);
+      return CheckResult.wrong("An exception was thrown while testing - "+e);
     }
 
     return CheckResult.correct();
   }
 
-  @DynamicTest(order = 5)
-  CheckResult normalExeNew02Test() {
-    checkConnection();
-    Connection connection = null;
-    try {
-      connection = DriverManager.getConnection(DB_URL, USER, PASS);
-    } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown, while trying to connect to database. Connection Failed");
-    }
-    try {
-      CheckOutput co = new CheckOutput();
-      if (!co.start("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
-
-      if (!co.input(
-              "show", "Category: lunch", "Name: sushi", "Ingredients:",
-              "salmon", "rice", "avocado"))
-        return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
-
-      if (!co.input("exit", "Bye!"))
-        return CheckResult.wrong("Your output should contain \"Bye!\"");
-
-      if (!co.programIsFinished())
-        return CheckResult.wrong("The application didn't exit.");
-    } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown while testing - " + e);
-    }
-
-    return CheckResult.correct();
-  }
 }
 
 

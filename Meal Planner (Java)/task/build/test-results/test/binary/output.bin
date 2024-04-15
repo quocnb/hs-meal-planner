@@ -15,13 +15,54 @@
 > salmon, rice, avocado
 The meal has been added!
 -What would you like to do (add, show, exit)?
+> add
+:Which meal do you want to add (breakfast, lunch, dinner)?
+> lunch
+Input the meal's name:
+> omelette
+Input the ingredients:
+> eggs, milk, cheese
+The meal has been added!
+-What would you like to do (add, show, exit)?
+> add
+:Which meal do you want to add (breakfast, lunch, dinner)?
+> breakfast
+Input the meal's name:
+
+> oatmeal
+Input the ingredients:
+$> oats, milk, banana, peanut butter
+The meal has been added!
+-What would you like to do (add, show, exit)?
 > show
+@Which category do you want to print (breakfast, lunch, dinner)?
+> lunch
 Category: lunch
+
 Name: sushi
 Ingredients:
 salmon
 rice
 avocado
+
+Name: omelette
+Ingredients:
+eggs
+milk
+cheese
+
+-What would you like to do (add, show, exit)?
+> show
+@Which category do you want to print (breakfast, lunch, dinner)?
+> breakfast
+Category: breakfast
+
+Name: oatmeal
+Ingredients:
+oats
+milk
+banana
+peanut butter
 
 -What would you like to do (add, show, exit)?
 > exit
@@ -30,98 +71,64 @@
 Start test 3[0m
 -What would you like to do (add, show, exit)?
 > show
+@Which category do you want to print (breakfast, lunch, dinner)?
+> lunch
 Category: lunch
+
 Name: sushi
 Ingredients:
 salmon
 rice
 avocado
 
+Name: omelette
+Ingredients:
+eggs
+milk
+cheese
+
 -What would you like to do (add, show, exit)?
-> exit
-Bye!
-[1;31m
-Start test 4[0m
--What would you like to do (add, show, exit)?
-> add
-:Which meal do you want to add (breakfast, lunch, dinner)?
-> lunch
-Input the meal's name:
-> sushi
-Input the ingredients:
-> salmon, rice, avocado
-The meal has been added!
--What would you like to do (add, show, exit)?
-> add
-:Which meal do you want to add (breakfast, lunch, dinner)?
+> show
+@Which category do you want to print (breakfast, lunch, dinner)?
 > breakfast
-Input the meal's name:
-
-> english
-Input the ingredients:
-> sausages, eggs
-The meal has been added!
+Category: breakfast
+
+Name: oatmeal
+Ingredients:
+oats
+milk
+banana
+peanut butter
+
+-What would you like to do (add, show, exit)?
+> show
+@Which category do you want to print (breakfast, lunch, dinner)?
+	> brunch
+<Wrong meal category! Choose from: breakfast, lunch, dinner.
+@Which category do you want to print (breakfast, lunch, dinner)?
+	> dinner
+No meals found.
 -What would you like to do (add, show, exit)?
 > add
 :Which meal do you want to add (breakfast, lunch, dinner)?
 	> dinner
 Input the meal's name:
-> meatballs
+> soup
 Input the ingredients:
-!> meat, bread, salt, pepper, egg
+> potato, rice, mushrooms
 The meal has been added!
 -What would you like to do (add, show, exit)?
 > show
-Category: lunch
-Name: sushi
-Ingredients:
-salmon
-rice
-avocado
-
-Category: breakfast
-Name: english
-Ingredients:
-	sausages
-eggs
-
+@Which category do you want to print (breakfast, lunch, dinner)?
+	> dinner
 Category: dinner
-Name: meatballs
-Ingredients:
-meat
-bread
-salt
-pepper
-egg
 
--What would you like to do (add, show, exit)?
-> exit
-Bye!
-[1;31m
-Start test 5[0m
--What would you like to do (add, show, exit)?
-> show
-Category: lunch
-Name: sushi
+Name: soup
 Ingredients:
-salmon
+potato
 rice
-avocado
-
-Category: breakfast
-Name: english
-Ingredients:
-	sausages
-eggs
-
-Category: dinner
-Name: meatballs
-Ingredients:
-meat
-bread
-salt
-pepper
-egg
+
+mushrooms
 
 -What would you like to do (add, show, exit)?
 > exit
