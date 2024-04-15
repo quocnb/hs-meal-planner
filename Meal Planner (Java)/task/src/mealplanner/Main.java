@@ -1,15 +1,17 @@
 package mealplanner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-  static ArrayList<Meal> meals;
+  static List<Meal> meals;
   static Scanner scanner;
+  static DbManager dbManager;
   public static void main(String[] args) {
-    meals = new ArrayList<>();
     scanner = new Scanner(System.in);
+    dbManager = new DbManager();
+    meals = dbManager.getMeals();
 
     while (true) {
         System.out.println("What would you like to do (add, show, exit)?");
@@ -69,7 +71,9 @@ public class Main {
       break;
     }
       // Print result
-    meals.add(new Meal(type, name, ingredients));
+    Meal meal = new Meal(meals.size() + 1, type, name, ingredients);
+    dbManager.addMeal(meal);
+    meals.add(meal);
     System.out.println("The meal has been added!");
   }
 }

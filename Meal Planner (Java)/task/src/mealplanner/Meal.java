@@ -1,21 +1,35 @@
 package mealplanner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 enum MealType {
     BREAKFAST, LUNCH, DINNER
 }
 public class Meal {
-    MealType type;
-    String name;
-    List<String> ingredients;
+    int mealId;
+    String category;
+    String meal;
+    List<Ingredient> ingredients;
     final static String ONLY_LETTER_REGEX = "[a-zA-Z ]+";
 
-    public Meal(String type, String name, String ingredients) {
-        this.type = MealType.valueOf(type.toUpperCase());
-        this.name = name;
-        this.ingredients = Arrays.stream(ingredients.split(",")).map(String::trim).toList();
+    public Meal(int mealId, String category, String meal, String ingredients) {
+        this.mealId = mealId;
+        this.category = category;
+        this.meal = meal;
+        this.ingredients = new ArrayList<>();
+        for (String ingredient : ingredients.split(",")) {
+            this.ingredients.add(new Ingredient(ingredient.trim()));
+        }
+    }
+
+    public Meal(int mealId, String category, String meal, List<Ingredient> ingredients) {
+        this.mealId = mealId;
+        this.category = category;
+        this.meal = meal;
+        this.ingredients = ingredients;
     }
 
     @Override
@@ -25,9 +39,9 @@ public class Meal {
                 Name: %s
                 Ingredients:
                 %s""",
-                type.name().toLowerCase(),
-                name,
-                String.join("\n", ingredients));
+                category,
+                meal,
+                String.join("\n", ingredients.stream().map(Ingredient::toString).toList()));
     }
 
     /**

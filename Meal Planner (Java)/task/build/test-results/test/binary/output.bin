@@ -1,100 +1,6 @@
 [1;31m
 Start test 1[0m
 -What would you like to do (add, show, exit)?
-> show
-"No meals saved. Add a meal first.
--What would you like to do (add, show, exit)?
-> new meal
--What would you like to do (add, show, exit)?
-> meal
--What would you like to do (add, show, exit)?
-> 
--What would you like to do (add, show, exit)?
->  	
--What would you like to do (add, show, exit)?
-> add
-:Which meal do you want to add (breakfast, lunch, dinner)?
-
-> dessert
-<Wrong meal category! Choose from: breakfast, lunch, dinner.
-:Which meal do you want to add (breakfast, lunch, dinner)?
-
-> nothing
-<Wrong meal category! Choose from: breakfast, lunch, dinner.
-:Which meal do you want to add (breakfast, lunch, dinner)?
-> meal1
-<Wrong meal category! Choose from: breakfast, lunch, dinner.
-:Which meal do you want to add (breakfast, lunch, dinner)?
-> meal@
-<Wrong meal category! Choose from: breakfast, lunch, dinner.
-:Which meal do you want to add (breakfast, lunch, dinner)?
-> 
-<Wrong meal category! Choose from: breakfast, lunch, dinner.
-:Which meal do you want to add (breakfast, lunch, dinner)?
->  	
-<Wrong meal category! Choose from: breakfast, lunch, dinner.
-:Which meal do you want to add (breakfast, lunch, dinner)?
-> lunch
-Input the meal's name:
-
-> burger1
- Wrong format. Use letters only!
-Input the meal's name:
-	> sushi@
- Wrong format. Use letters only!
-Input the meal's name:
-> 
- Wrong format. Use letters only!
-Input the meal's name:
->  	
- Wrong format. Use letters only!
-Input the meal's name:
-> sushi
-Input the ingredients:
-> salmon, rice1, avocado
- Wrong format. Use letters only!
-Input the ingredients:
-> salmon, , avocado
- Wrong format. Use letters only!
-Input the ingredients:
-> salmon,, avocado
- Wrong format. Use letters only!
-Input the ingredients:
-> salmon, rice, 
- Wrong format. Use letters only!
-Input the ingredients:
-> salmon, rice, avocado@
- Wrong format. Use letters only!
-Input the ingredients:
-> salmon, rice, avocado
-The meal has been added!
--What would you like to do (add, show, exit)?
-> add
-:Which meal do you want to add (breakfast, lunch, dinner)?
-> breakfast
-Input the meal's name:
-> banana oatmeal
-Input the ingredients:
-$> oats, milk, banana, peanut butter
-The meal has been added!
--What would you like to do (add, show, exit)?
-> show
-Category: lunch
-Name: sushi
-Ingredients:
-salmon
-rice
-avocado
-
-Category: breakfast
-Name: banana oatmeal
-Ingredients:
-oats
-milk
-banana
-peanut butter
-
--What would you like to do (add, show, exit)?
 > exit
 Bye!
 [1;31m
@@ -123,6 +29,20 @@
 [1;31m
 Start test 3[0m
 -What would you like to do (add, show, exit)?
+> show
+Category: lunch
+Name: sushi
+Ingredients:
+salmon
+rice
+avocado
+
+-What would you like to do (add, show, exit)?
+> exit
+Bye!
+[1;31m
+Start test 4[0m
+-What would you like to do (add, show, exit)?
 > add
 :Which meal do you want to add (breakfast, lunch, dinner)?
 > lunch
@@ -136,9 +56,19 @@
 :Which meal do you want to add (breakfast, lunch, dinner)?
 > breakfast
 Input the meal's name:
-> banana oatmeal
+
+> english
 Input the ingredients:
-$> oats, milk, banana, peanut butter
+> sausages, eggs
+The meal has been added!
+-What would you like to do (add, show, exit)?
+> add
+:Which meal do you want to add (breakfast, lunch, dinner)?
+	> dinner
+Input the meal's name:
+> meatballs
+Input the ingredients:
+!> meat, bread, salt, pepper, egg
 The meal has been added!
 -What would you like to do (add, show, exit)?
 > show
@@ -150,12 +80,48 @@
 avocado
 
 Category: breakfast
-Name: banana oatmeal
+Name: english
 Ingredients:
-oats
-milk
-banana
-peanut butter
+	sausages
+eggs
+
+Category: dinner
+Name: meatballs
+Ingredients:
+meat
+bread
+salt
+pepper
+egg
+
+-What would you like to do (add, show, exit)?
+> exit
+Bye!
+[1;31m
+Start test 5[0m
+-What would you like to do (add, show, exit)?
+> show
+Category: lunch
+Name: sushi
+Ingredients:
+salmon
+rice
+avocado
+
+Category: breakfast
+Name: english
+Ingredients:
+	sausages
+eggs
+
+Category: dinner
+Name: meatballs
+Ingredients:
+meat
+bread
+salt
+pepper
+egg
 
 -What would you like to do (add, show, exit)?
 > exit
