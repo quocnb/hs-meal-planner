@@ -26,6 +26,7 @@ public class DbManager {
             Statement statement = connection.createStatement();
             statement.executeUpdate(Queries.CREATE_TBL_MEALS);
             statement.executeUpdate(Queries.CREATE_TBL_INGREDIENTS);
+            statement.executeUpdate(Queries.CREATE_TBL_PLANS);
             statement.close();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -44,10 +45,11 @@ public class DbManager {
         return meals;
     }
 
-    public List<Meal> getMeal(String category) {
+    public List<Meal> getMeal(String category, boolean orderByName) {
         List<Meal> meals = new ArrayList<>();
         try {
-            PreparedStatement getMealStm = connection.prepareStatement(Queries.SELECT_MEAL_BY_CATEGORY);
+            String sql = orderByName ? Queries.SELECT_MEAL_BY_CATEGORY_ORDER_BY_NAME : Queries.SELECT_MEAL_BY_CATEGORY;
+            PreparedStatement getMealStm = connection.prepareStatement(sql);
             getMealStm.setString(1, category);
             ResultSet mealRS = getMealStm.executeQuery();
             meals = getMealFromResultSet(mealRS);
@@ -89,6 +91,20 @@ public class DbManager {
             statement.setInt(2, meal.mealId);
             for (Ingredient ingredient : meal.ingredients) {
                 statement.setString(1, ingredient.ingredient);
+                statement.execute();
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void savePlan(List<Plan> plans) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(Queries.INSERT_PLAN);
+            for (Plan plan : plans) {
+                statement.setInt(1, plan.mealOption.mealOptionId);
+                statement.setInt(2, plan.mealCategory.mealCategoryId);
+                statement.setInt(3, plan.meal.mealId);
                 statement.execute();
             }
         } catch (SQLException e) {

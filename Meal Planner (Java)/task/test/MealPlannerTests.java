@@ -5,10 +5,52 @@ import org.hyperskill.hstest.testcase.CheckResult;
 import org.hyperskill.hstest.testing.TestedProgram;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+class Column {
+  public String first;
+  public String second;
+
+  public Column(String first, String second) {
+    this.first = first;
+    this.second = second;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Column column = (Column) o;
+    return Objects.equals(first, column.first) && Objects.equals(second, column.second);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(first, second);
+  }
+}
+
+class dbTable {
+  String name;
+  List<Column> columnNameType;
+
+  public dbTable(String name, List<Column> columnNameType) {
+    this.name = name;
+    this.columnNameType = columnNameType;
+  }
+}
+
+class MyMealTestData {
+  String mealCategory;
+  String mealName;
+  String[] ingredients;
+
+  MyMealTestData(String mealCategory, String mealName, String[] ingredients) {
+    this.mealCategory = mealCategory;
+    this.mealName = mealName;
+    this.ingredients = ingredients;
+  }
+}
 
 public class MealPlannerTests extends StageTest {
 
@@ -16,38 +58,23 @@ public class MealPlannerTests extends StageTest {
   static final String USER = "postgres";
   static final String PASS = "1111";
 
-  public class Column {
-    private String first;
-    private String second;
+  String[] days = new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
-    public Column(String first, String second) {
-      this.first = first;
-      this.second = second;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Column column = (Column) o;
-      return Objects.equals(first, column.first) && Objects.equals(second, column.second);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(first, second);
-    }
-  }
-
-  class dbTable {
-    String name;
-    List<Column> columnNameType;
-
-    public dbTable(String name, List<Column> columnNameType) {
-      this.name = name;
-      this.columnNameType = columnNameType;
-    }
-  }
+  static final MyMealTestData[] mealsList = new MyMealTestData[]{
+          new MyMealTestData("breakfast", "scrambled eggs", new String[]{"eggs", "milk", "cheese"}),
+          new MyMealTestData("breakfast", "sandwich", new String[]{"bread", "cheese", "ham"}),
+          new MyMealTestData("breakfast", "oatmeal", new String[]{"oats", "milk", "banana", "peanut butter"}),
+          new MyMealTestData("breakfast", "english breakfast", new String[]{"eggs", "sausages", "bacon", "tomatoes",
+                  "bread"}),
+          new MyMealTestData("lunch", "sushi", new String[]{"salmon", "rice", "avocado"}),
+          new MyMealTestData("lunch", "chicken salad", new String[]{"chicken", "lettuce", "tomato", "olives"}),
+          new MyMealTestData("lunch", "omelette", new String[]{"eggs", "milk", "cheese"}),
+          new MyMealTestData("lunch", "salad", new String[]{"lettuce", "tomato", "onion", "cheese", "olives"}),
+          new MyMealTestData("dinner", "pumpkin soup", new String[]{"pumpkin", "coconut milk", "curry", "carrots"}),
+          new MyMealTestData("dinner", "beef steak", new String[]{"beef steak"}),
+          new MyMealTestData("dinner", "pizza", new String[]{"flour", "tomato", "cheese", "salami"}),
+          new MyMealTestData("dinner", "tomato soup", new String[]{"tomato", "orzo"})
+  };
 
   void checkTableSchema(List<dbTable> tables) {
     try {
@@ -104,7 +131,8 @@ public class MealPlannerTests extends StageTest {
   }
 
   @DynamicTest(order = 1)
-  public CheckResult normalExe9Test() {
+  public CheckResult normalExe12Test() {
+
     checkConnection();
     Connection connection = null;
     try {
@@ -118,12 +146,13 @@ public class MealPlannerTests extends StageTest {
       statement.executeUpdate("DROP TABLE if exists ingredients");
       statement.executeUpdate("DROP TABLE if exists meals");
     } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown, while trying to drop tables - "+e);
+      return CheckResult.wrong("An exception was thrown, while trying to drop tables - " + e);
     }
 
     CheckOutput co = new CheckOutput();
-    if (!co.start("What would you like to do (add, show, exit)?"))
-      return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+    if (!co.start("What would you like to do (add, show, plan, exit)?"))
+      return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, exit)" +
+              "?\"");
     ArrayList<dbTable> tables = new ArrayList<>(Arrays.asList(
             new dbTable("ingredients", new ArrayList<>(
                     Arrays.asList(
@@ -150,7 +179,7 @@ public class MealPlannerTests extends StageTest {
   }
 
   @DynamicTest(order = 2)
-  CheckResult normalExe10Test() {
+  CheckResult normalExe13Test() {
     checkConnection();
     Connection connection = null;
     try {
@@ -164,17 +193,18 @@ public class MealPlannerTests extends StageTest {
       statement.executeUpdate("DROP TABLE if exists ingredients");
       statement.executeUpdate("DROP TABLE if exists meals");
     } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown, while trying to drop tables - "+e);
+      return CheckResult.wrong("An exception was thrown, while trying to drop tables - " + e);
     }
-
 
     try {
       CheckOutput co = new CheckOutput();
-      if (!co.start("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.start("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)" +
+                "?\"");
 
       if (!co.input("lunch", "Input the meal's name:"))
         return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
@@ -185,11 +215,13 @@ public class MealPlannerTests extends StageTest {
       if (!co.input("salmon, rice, avocado", "The meal has been added!"))
         return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
 
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)" +
+                "?\"");
 
       if (!co.input("lunch", "Input the meal's name:"))
         return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
@@ -200,11 +232,13 @@ public class MealPlannerTests extends StageTest {
       if (!co.input("eggs, milk, cheese", "The meal has been added!"))
         return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
 
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)" +
+                "?\"");
 
       if (!co.input("breakfast", "Input the meal's name:"))
         return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
@@ -215,28 +249,33 @@ public class MealPlannerTests extends StageTest {
       if (!co.input("oats, milk, banana, peanut butter", "The meal has been added!"))
         return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
 
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, " +
+                "lunch, dinner)?\"");
 
       if (!co.input("lunch", "Category: lunch", "Name: sushi", "Ingredients:", "salmon", "rice", "avocado",
               "Name: omelette", "Ingredients:", "eggs", "milk", "cheese"))
         return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
 
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, " +
+                "lunch, dinner)?\"");
 
       if (!co.input("breakfast", "Category: breakfast", "Name: oatmeal", "Ingredients:", "oats",
               "milk", "banana", "peanut butter"))
         return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
 
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("exit", "Bye!"))
         return CheckResult.wrong("Your output should contain \"Bye!\"");
@@ -244,14 +283,14 @@ public class MealPlannerTests extends StageTest {
       if (!co.programIsFinished())
         return CheckResult.wrong("The application didn't exit.");
     } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown while testing - "+e);
+      return CheckResult.wrong("An exception was thrown while testing - " + e);
     }
 
     return CheckResult.correct();
   }
 
   @DynamicTest(order = 3)
-  CheckResult normalExe11Test() {
+  CheckResult normalExe14Test() {
     checkConnection();
     Connection connection = null;
     try {
@@ -262,31 +301,37 @@ public class MealPlannerTests extends StageTest {
 
     try {
       CheckOutput co = new CheckOutput();
-      if (!co.start("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.start("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, " +
+                "lunch, dinner)?\"");
 
       if (!co.input("lunch", "Category: lunch", "Name: sushi", "Ingredients:", "salmon", "rice", "avocado",
               "Name: omelette", "Ingredients:", "eggs", "milk", "cheese"))
         return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
 
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, " +
+                "lunch, dinner)?\"");
 
       if (!co.input("breakfast", "Category: breakfast", "Name: oatmeal", "Ingredients:", "oats",
               "milk", "banana", "peanut butter"))
         return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
 
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
+      if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
 
       if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
+        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, " +
+                "lunch, dinner)?\"");
 
       if (!co.input("brunch", "Wrong meal category! Choose from: breakfast, lunch, dinner."))
         return CheckResult.wrong("Wrong output after the input of a category that doesn't exist.");
@@ -294,38 +339,117 @@ public class MealPlannerTests extends StageTest {
       if (!co.input("dinner", "No meals found."))
         return CheckResult.wrong("Wrong output for a category with no added meals.");
 
-      if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, dinner)?\"");
-
-      if (!co.input("dinner", "Input the meal's name:"))
-        return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
-
-      if (!co.input("soup", "Input the ingredients:"))
-        return CheckResult.wrong("Your output should contain \"Input the ingredients:\"");
-
-      if (!co.input("potato, rice, mushrooms", "The meal has been added!"))
-        return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
-
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
-
-      if (!co.input("show", "Which category do you want to print (breakfast, lunch, dinner)?"))
-        return CheckResult.wrong("Your program should ask the user about the meal category to print: \"(breakfast, lunch, dinner)?\"");
-
-      if (!co.input("dinner", "Category: dinner", "Name: soup", "Ingredients:", "potato",
-              "rice", "mushrooms"))
-        return CheckResult.wrong("Wrong \"show\" output for a saved meal.");
-
-      if (!co.inputNext("What would you like to do (add, show, exit)?"))
-        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, exit)?\"");
-
       if (!co.input("exit", "Bye!"))
         return CheckResult.wrong("Your output should contain \"Bye!\"");
 
       if (!co.programIsFinished())
         return CheckResult.wrong("The application didn't exit.");
     } catch (Exception e) {
-      return CheckResult.wrong("An exception was thrown while testing - "+e);
+      return CheckResult.wrong("An exception was thrown while testing - " + e);
+    }
+
+    return CheckResult.correct();
+  }
+
+  @DynamicTest(order = 4)
+  CheckResult normalExe15Test() {
+    checkConnection();
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(DB_URL, USER, PASS);
+    } catch (Exception e) {
+      return CheckResult.wrong("An exception was thrown, while trying to connect to database. Connection Failed");
+    }
+    try {
+      Statement statement = connection.createStatement();
+      statement.executeUpdate("DROP TABLE if exists ingredients");
+      statement.executeUpdate("DROP TABLE if exists plan");
+      statement.executeUpdate("DROP TABLE if exists meals");
+    } catch (Exception e) {
+      return CheckResult.wrong("An exception was thrown, while trying to drop tables - " + e);
+    }
+
+    try {
+      CheckOutput co = new CheckOutput();
+      if (!co.start("What would you like to do (add, show, plan, exit)?"))
+        return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                "exit)?\"");
+
+
+      for (MyMealTestData meal : mealsList) {
+        if (!co.input("add", "Which meal do you want to add (breakfast, lunch, dinner)?"))
+          return CheckResult.wrong("Your program should ask the user about meal category: \"(breakfast, lunch, " +
+                  "dinner)?\"");
+
+        if (!co.input(meal.mealCategory, "Input the meal's name:"))
+          return CheckResult.wrong("Your output should contain \"Input the meal's name:\"");
+
+        if (!co.input(meal.mealName, "Input the ingredients:"))
+          return CheckResult.wrong("Your output should contain \"Input the ingredients:\"");
+
+        if (!co.input(String.join(",", meal.ingredients), "The meal has been added!"))
+          return CheckResult.wrong("Your output should contain \"The meal has been added!\"");
+
+        if (!co.inputNext("What would you like to do (add, show, plan, exit)?"))
+          return CheckResult.wrong("Your program should ask the user about the required action: \"(add, show, plan, " +
+                  "exit)?\"");
+
+      }
+
+      co.getNextOutput("plan");
+      int index = 0;
+      for (String day : days) {
+        if (!co.inputNext(day))
+          return CheckResult.wrong("Your output should contain \"" + day + "\"");
+
+        String[] categories = new String[]{"breakfast", "lunch", "dinner"};
+        String[][] alphabetic = {
+                new String[]{"english breakfast", "oatmeal", "sandwich", "scrambled eggs"},
+                new String[]{"chicken salad", "omelette", "salad", "sushi"},
+                new String[]{"beef steak", "pizza", "pumpkin soup", "tomato soup"}
+        };
+        for (int i = 0; i < 3; i++) {
+          String category = categories[i];
+          if (!co.inputNext(alphabetic[i]))
+            return CheckResult.wrong("Make sure that formatting of your output is similar to the one in the example. " +
+                    "Also, your output should contain the meals in alphabetic order.");
+
+          if (!co.inputNext("Choose the " + category + " for " + day + " from the list above:"))
+            return CheckResult.wrong("Your output should contain the prompt for the " + category + " meal.");
+
+          if (!co.input("nonExistMeal", "This meal doesn’t exist. Choose a meal from the list above."))
+            return CheckResult.wrong("Your output should contain \"This meal doesn’t exist. Choose a meal from the " +
+                    "list above.\"");
+
+          co.getNextOutput(((MyMealTestData) (Arrays.stream(mealsList).filter(x -> x.mealCategory.equals(category)).toArray()[index % 4])).mealName);
+        }
+        if (!co.inputNext("Yeah! We planned the meals for " + day + "."))
+          return CheckResult.wrong("Your output should contain \"Yeah! We planned the meals for " + day + ".\".");
+        index++;
+      }
+
+      String[] planPrintout = new String[]{"Monday", "Breakfast: scrambled eggs", "Lunch: sushi", "Dinner: pumpkin " +
+              "soup",
+              "Tuesday", "Breakfast: sandwich", "Lunch: chicken salad", "Dinner: beef steak",
+              "Wednesday", "Breakfast: oatmeal", "Lunch: omelette", "Dinner: pizza",
+              "Thursday", "Breakfast: english breakfast", "Lunch: salad", "Dinner: tomato soup",
+              "Friday", "Breakfast: scrambled eggs", "Lunch: sushi", "Dinner: pumpkin soup",
+              "Saturday", "Breakfast: sandwich", "Lunch: chicken salad", "Dinner: beef steak",
+              "Sunday", "Breakfast: oatmeal", "Lunch: omelette", "Dinner: pizza"};
+
+      for (String line : planPrintout) {
+        if (!co.inputNext(line))
+          return CheckResult.wrong("Your output should contain \"" + line + "\".");
+      }
+
+      if (!co.input("exit", "Bye!"))
+        return CheckResult.wrong("Your output should contain \"Bye!\"");
+
+      if (!co.programIsFinished())
+        return CheckResult.wrong("The application didn't exit.");
+
+    } catch (Exception e) {
+      return CheckResult.wrong("An exception was thrown while testing - " + e);
     }
 
     return CheckResult.correct();
