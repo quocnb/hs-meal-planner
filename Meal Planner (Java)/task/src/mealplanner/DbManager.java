@@ -98,6 +98,40 @@ public class DbManager {
         }
     }
 
+    public List<Plan> getAllPlans() {
+        List<Plan> result = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(Queries.SELECT_ALL_PLANS);
+            result = getPlans(rs);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return result;
+    }
+
+    private List<Plan> getPlans(ResultSet rs) throws SQLException {
+        List<Plan> result = new ArrayList<>();
+        while (rs.next()) {
+            int mealOption = rs.getInt("meal_option");
+            int categoryId = rs.getInt("meal_category");
+            int mealId = rs.getInt("meal_id");
+            PreparedStatement getIngredientsStm = connection.prepareStatement(Queries.SELECT_INGREDIENTS_BY_MEAL);
+            getIngredientsStm.setInt(1, mealId);
+            ResultSet ingredientsRs = getIngredientsStm.executeQuery();
+            List<Ingredient> ingredients = new ArrayList<>();
+            while (ingredientsRs.next()) {
+                int ingredientId = ingredientsRs.getInt("ingredient_id");
+                String ingredient = ingredientsRs.getString("ingredient");
+                ingredients.add(new Ingredient(ingredientId, ingredient, mealId));
+            }
+            Meal meal = new Meal(mealId, Plan.MealCategory.values()[categoryId - 1].name(), "", ingredients);
+            Plan plan = new Plan(mealOption, categoryId, meal);
+            result.add(plan);
+        }
+        return result;
+    }
+
     public void savePlan(List<Plan> plans) {
         try {
             PreparedStatement statement = connection.prepareStatement(Queries.INSERT_PLAN);

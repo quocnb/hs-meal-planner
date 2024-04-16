@@ -24,6 +24,13 @@ public class Plan implements Comparable<Plan> {
     MealCategory mealCategory;
     Meal meal;
 
+    public Plan() {}
+    public Plan(int mealOption, int mealCategory, Meal meal) {
+        this.mealOption = MealOption.values()[mealOption - 1];
+        this.mealCategory = MealCategory.values()[mealCategory - 1];
+        this.meal = meal;
+    }
+
     @Override
     public int compareTo(Plan o) {
         return this.mealCategory.compareTo(o.mealCategory);

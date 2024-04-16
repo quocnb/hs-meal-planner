@@ -24,6 +24,7 @@ public class Queries {
     public static String SELECT_MEAL_BY_CATEGORY = "SELECT * FROM meals WHERE category = ? ORDER BY meal_id;";
     public static String SELECT_MEAL_BY_CATEGORY_ORDER_BY_NAME = "SELECT * FROM meals WHERE category = ? ORDER BY meal;";
     public static String SELECT_INGREDIENTS_BY_MEAL = "SELECT * FROM ingredients WHERE meal_id = ?;";
+    public static String SELECT_ALL_PLANS = "SELECT * FROM plan ORDER BY meal_option, meal_category;";
 
     public static String INSERT_MEAL = "INSERT INTO meals(meal_id, category, meal) VALUES (?, ?, ?);";
     public static String INSERT_INGREDIENTS = "INSERT INTO ingredients(ingredient_id, ingredient, meal_id) VALUES (0, ?, ?);";

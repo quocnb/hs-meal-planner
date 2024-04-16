@@ -688,6 +688,312 @@ files:
         }
       }
     learner_created: false
+  - name: src/mealplanner/Meal.java
+    visible: true
+    text: |
+      package mealplanner;
+      
+      import java.util.ArrayList;
+      import java.util.List;
+      
+      public class Meal {
+          int mealId;
+          String category;
+          String meal;
+          List<Ingredient> ingredients;
+          final static String ONLY_LETTER_REGEX = "[a-zA-Z ]+";
+      
+          public Meal(int mealId, String category, String meal, String ingredients) {
+              this.mealId = mealId;
+              this.category = category;
+              this.meal = meal;
+              this.ingredients = new ArrayList<>();
+              for (String ingredient : ingredients.split(",")) {
+                  this.ingredients.add(new Ingredient(ingredient.trim()));
+              }
+          }
+      
+          public Meal(int mealId, String category, String meal, List<Ingredient> ingredients) {
+              this.mealId = mealId;
+              this.category = category;
+              this.meal = meal;
+              this.ingredients = ingredients;
+          }
+      
+          @Override
+          public String toString() {
+              return String.format("""
+                      Name: %s
+                      Ingredients:
+                      %s""",
+                      meal,
+                      String.join("\n", ingredients.stream().map(Ingredient::toString).toList()));
+          }
+      
+          /**
+           * Validate meal type.
+           * Meal type must be breakfast, lunch or dinner.
+           * @param category string
+           * @return true: valid type otherwise false
+           */
+          public static boolean validateCategory(String category) {
+              final List<String> validCategories = List.of("breakfast", "lunch", "dinner");
+              return validCategories.contains(category);
+          }
+      
+          /**
+           * Validate meal name.
+           * Meal name must be letters only.
+           * @param name string
+           * @return true: valid name otherwise false
+           */
+          public static boolean validateName(String name) {
+              return name.matches(ONLY_LETTER_REGEX);
+          }
+      
+          /**
+           * Validate ingredients.
+           * Meal name must be letters only.
+           * @param name string
+           * @return true: valid name otherwise false
+           */
+          public static boolean validateIngredients(String ingredients) {
+              if (ingredients.isEmpty()) {
+                  return false;
+              }
+              for (String ingredient : ingredients.split(",")) {
+                  if (ingredient.trim().isEmpty()) {
+                      return false;
+                  }
+                  if (!ingredient.matches(ONLY_LETTER_REGEX)) {
+                      return false;
+                  }
+              }
+              return true;
+          }
+      }
+    learner_created: true
+  - name: src/mealplanner/DbManager.java
+    visible: true
+    text: |
+      package mealplanner;
+      
+      import javax.xml.transform.Result;
+      import java.sql.*;
+      import java.util.ArrayList;
+      import java.util.List;
+      
+      public class DbManager {
+          private Connection connection;
+          public DbManager() {
+              try {
+                  String DB_URL = "jdbc:postgresql:meals_db";
+                  String USER = "postgres";
+                  String PASS = "1111";
+      
+                  connection = DriverManager.getConnection(DB_URL, USER, PASS);
+                  connection.setAutoCommit(true);
+                  migrate();
+              } catch (SQLException e) {
+                  System.err.println(e.getMessage());
+              }
+          }
+      
+          public void migrate() {
+              try {
+                  Statement statement = connection.createStatement();
+                  statement.executeUpdate(Queries.CREATE_TBL_MEALS);
+                  statement.executeUpdate(Queries.CREATE_TBL_INGREDIENTS);
+                  statement.executeUpdate(Queries.CREATE_TBL_PLANS);
+                  statement.close();
+              } catch (SQLException e) {
+                  System.err.println(e.getMessage());
+              }
+          }
+      
+          public List<Meal> getMeals() {
+              List<Meal> meals = new ArrayList<>();
+              try {
+                  Statement getMealStm = connection.createStatement();
+                  ResultSet mealRS = getMealStm.executeQuery(Queries.SELECT_ALL_MEALS);
+                  meals = getMealFromResultSet(mealRS);
+              } catch (SQLException e) {
+                  System.err.println(e.getMessage());
+              }
+              return meals;
+          }
+      
+          public List<Meal> getMeal(String category, boolean orderByName) {
+              List<Meal> meals = new ArrayList<>();
+              try {
+                  String sql = orderByName ? Queries.SELECT_MEAL_BY_CATEGORY_ORDER_BY_NAME : Queries.SELECT_MEAL_BY_CATEGORY;
+                  PreparedStatement getMealStm = connection.prepareStatement(sql);
+                  getMealStm.setString(1, category);
+                  ResultSet mealRS = getMealStm.executeQuery();
+                  meals = getMealFromResultSet(mealRS);
+              } catch (SQLException e) {
+                  System.err.println(e.getMessage());
+              }
+              return meals;
+          }
+      
+          List<Meal> getMealFromResultSet(ResultSet rs) throws SQLException {
+              List<Meal> result = new ArrayList<>();
+              while (rs.next()) {
+                  int mealId = rs.getInt("meal_id");
+                  String category = rs.getString("category");
+                  String name = rs.getString("meal");
+                  PreparedStatement getIngredientsStm = connection.prepareStatement(Queries.SELECT_INGREDIENTS_BY_MEAL);
+                  getIngredientsStm.setInt(1, mealId);
+                  ResultSet ingredientsRs = getIngredientsStm.executeQuery();
+                  List<Ingredient> ingredients = new ArrayList<>();
+                  while (ingredientsRs.next()) {
+                      int ingredientId = ingredientsRs.getInt("ingredient_id");
+                      String ingredient = ingredientsRs.getString("ingredient");
+                      ingredients.add(new Ingredient(ingredientId, ingredient, mealId));
+                  }
+                  Meal meal = new Meal(mealId, category, name, ingredients);
+                  result.add(meal);
+              }
+              return result;
+          }
+      
+          public void addMeal(Meal meal) {
+              try {
+                  PreparedStatement statement = connection.prepareStatement(Queries.INSERT_MEAL);
+                  statement.setInt(1, meal.mealId);
+                  statement.setString(2, meal.category);
+                  statement.setString(3, meal.meal);
+                  statement.execute();
+                  statement = connection.prepareStatement(Queries.INSERT_INGREDIENTS);
+                  statement.setInt(2, meal.mealId);
+                  for (Ingredient ingredient : meal.ingredients) {
+                      statement.setString(1, ingredient.ingredient);
+                      statement.execute();
+                  }
+              } catch (SQLException e) {
+                  System.err.println(e.getMessage());
+              }
+          }
+      
+          public void savePlan(List<Plan> plans) {
+              try {
+                  PreparedStatement statement = connection.prepareStatement(Queries.INSERT_PLAN);
+                  for (Plan plan : plans) {
+                      statement.setInt(1, plan.mealOption.mealOptionId);
+                      statement.setInt(2, plan.mealCategory.mealCategoryId);
+                      statement.setInt(3, plan.meal.mealId);
+                      statement.execute();
+                  }
+              } catch (SQLException e) {
+                  System.err.println(e.getMessage());
+              }
+          }
+      }
+    learner_created: true
+  - name: src/mealplanner/Queries.java
+    visible: true
+    text: |
+      package mealplanner;
+      
+      public class Queries {
+          public static String CREATE_TBL_MEALS = """
+                  CREATE TABLE IF NOT EXISTS meals (
+                    meal_id INT PRIMARY KEY,
+                    category VARCHAR(255),
+                    meal VARCHAR(255)
+                  );""";
+          public static String CREATE_TBL_INGREDIENTS = """
+                  CREATE TABLE IF NOT EXISTS ingredients (
+                    ingredient_id INT,
+                    ingredient VARCHAR(255),
+                    meal_id INT
+                  );""";
+          public static String CREATE_TBL_PLANS = """
+                  CREATE TABLE IF NOT EXISTS plan (
+                    meal_option INT,
+                    meal_category INT,
+                    meal_id INT
+                  );""";
+      
+          public static String SELECT_ALL_MEALS = "SELECT * FROM meals ORDER BY meal_id;";
+          public static String SELECT_MEAL_BY_CATEGORY = "SELECT * FROM meals WHERE category = ? ORDER BY meal_id;";
+          public static String SELECT_MEAL_BY_CATEGORY_ORDER_BY_NAME = "SELECT * FROM meals WHERE category = ? ORDER BY meal;";
+          public static String SELECT_INGREDIENTS_BY_MEAL = "SELECT * FROM ingredients WHERE meal_id = ?;";
+      
+          public static String INSERT_MEAL = "INSERT INTO meals(meal_id, category, meal) VALUES (?, ?, ?);";
+          public static String INSERT_INGREDIENTS = "INSERT INTO ingredients(ingredient_id, ingredient, meal_id) VALUES (0, ?, ?);";
+          public static String INSERT_PLAN = "INSERT INTO plan(meal_option, meal_category, meal_id) VALUES (?, ?, ?);";
+      }
+    learner_created: true
+  - name: src/mealplanner/Ingredient.java
+    visible: true
+    text: |
+      package mealplanner;
+      
+      public class Ingredient {
+          int ingredientId;
+          String ingredient;
+          int mealId;
+      
+          public Ingredient(String ingredient) {
+              this.ingredient = ingredient;
+          }
+      
+          public Ingredient(int ingredientId, String ingredient, int mealId) {
+              this.ingredientId = ingredientId;
+              this.ingredient = ingredient;
+              this.mealId = mealId;
+          }
+      
+          @Override
+          public String toString() {
+              return ingredient;
+          }
+      }
+    learner_created: true
+  - name: src/mealplanner/Plan.java
+    visible: true
+    text: |
+      package mealplanner;
+      
+      import java.time.DayOfWeek;
+      
+      public class Plan implements Comparable<Plan> {
+          enum MealOption {
+              Monday(1), Tuesday(2), Wednesday(3), Thursday(4), Friday(5), Saturday(6), Sunday(7);
+      
+              final int mealOptionId;
+              MealOption(int id) {
+                  mealOptionId = id;
+              }
+          }
+          enum MealCategory {
+              breakfast(1), lunch(2), dinner(3);
+      
+              final int mealCategoryId;
+              MealCategory(int id) {
+                  mealCategoryId = id;
+              }
+          }
+      
+          MealOption mealOption;
+          MealCategory mealCategory;
+          Meal meal;
+      
+          @Override
+          public int compareTo(Plan o) {
+              return this.mealCategory.compareTo(o.mealCategory);
+          }
+      }
+    learner_created: true
+  - name: plan.txt
+    visible: true
+    learner_created: true
 feedback_link: https://hyperskill.org/learn/step/25576#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Well done! You've finished the project. Select a new project on <a href="https://hyperskill.org/projects">Hyperskill</a>
+    to continue learning.
+  time: "Tue, 16 Apr 2024 04:44:27 UTC"
 record: -1

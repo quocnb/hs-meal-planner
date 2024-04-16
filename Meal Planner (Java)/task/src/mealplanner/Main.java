@@ -1,8 +1,11 @@
 package mealplanner;
 
-import java.time.DayOfWeek;
+import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 public class Main {
   static List<Meal> meals;
@@ -14,7 +17,7 @@ public class Main {
     meals = dbManager.getMeals();
 
     while (true) {
-        System.out.println("What would you like to do (add, show, plan, exit)?");
+        System.out.println("What would you like to do (add, show, plan, save, exit)?");
         switch (scanner.nextLine()) {
           case "exit":
             System.out.println("Bye!");
@@ -27,6 +30,9 @@ public class Main {
             break;
           case "plan":
             makePlan();
+            break;
+          case "save":
+            save();
             break;
           default:
             break;
@@ -133,6 +139,32 @@ public class Main {
             Dinner: %s
 
             """, mealOption.name(), planList.get(0).meal.meal, planList.get(1).meal.meal, planList.get(2).meal.meal);
-    };
+    }
+  }
+
+  static void save() {
+    List<Plan> plans = dbManager.getAllPlans();
+    if (plans.isEmpty()) {
+      System.out.println("Unable to save. Plan your meals first.");
+      return;
+    }
+    System.out.println("Input a filename:");
+    String fileName = scanner.nextLine();
+    var shoppingList = plans.stream()
+            .flatMap(s -> s.meal.ingredients.stream().map(i -> i.ingredient))
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+            .entrySet().stream()
+            .map(entry -> entry.getKey() + (entry.getValue() > 1 ? " x" + entry.getValue() : ""))
+            .reduce("", (result, str) -> result.isEmpty() ? str : result + "\n" + str);;
+    saveToFile(shoppingList, fileName);
+    System.out.println("Saved!");
+  }
+
+  private static void saveToFile(String content, String fileName) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+      writer.write(content);
+    } catch (IOException e) {
+      System.err.println("Error writing to file: " + e.getMessage());
+    }
   }
 }
